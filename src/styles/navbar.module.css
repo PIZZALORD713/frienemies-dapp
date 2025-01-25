@@ -1,0 +1,88 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navContent {
+    display: flex; /* Ensure horizontal layout */
+    justify-content: flex-start; /* Align content to the left */
+    align-items: center; /* Center vertically */
+    width: 100%; /* Ensure full width */
+    gap: 2rem; /* Add spacing between logo and links */
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #f5f5f5;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .navLinks
+
+{
+    display: flex; /* Ensure links are aligned horizontally */
+    list-style: none; /* Remove bullets */
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem; /* Add spacing between links */
+    align-items: center; /* Vertically align the links */
+}
+
+.navLinks li {
+    display: inline; /* Make sure each list item is inline */
+}
+
+.navLinks a {
+    text-decoration: none; /* Remove underline */
+    color: #555; /* Neutral link color */
+    font-size: 1rem;
+    transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+    .navLinks a:hover {
+        color: #000; /* Darker color on hover */
+    }
+
+}
+
+.navLinks button {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+    .navLinks button:hover {
+        color: #000;
+    }
+
+.branding {
+    cursor: pointer;
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.navLinks button {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+    .navLinks button:hover {
+        color: #000;
+    }

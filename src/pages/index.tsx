@@ -2,6 +2,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import Navbar from '../components/Navbar';
+import FriendsieViewer from '../components/FriendsieViewer';
 
 const Home: NextPage = () => {
   return (
@@ -13,9 +15,12 @@ const Home: NextPage = () => {
           name="description"
         />
         <link href="/favicon.ico" rel="icon" />
-      </Head>
+          </Head>
 
-      <main className={styles.main}>
+          <Navbar />
+
+          <main className={styles.main}>
+              <FriendsieViewer friendsieId={"8448"}/>
         <ConnectButton />
 
         <h1 className={styles.title}>

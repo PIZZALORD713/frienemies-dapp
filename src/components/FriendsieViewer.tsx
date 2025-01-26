@@ -198,7 +198,11 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
                                 mesh.geometry.addGroup(0, Infinity, 1); // Face material
 
                                 mesh.material = [primaryMaterial, faceMaterial];
-                                mesh.material.needsUpdate = true;
+
+                                // Set `needsUpdate` for each material in the array
+                                (mesh.material as THREE.Material[]).forEach((material) => {
+                                    material.needsUpdate = true;
+                                });
                             } else {
                                 console.warn("Material is not MeshStandardMaterial and cannot be processed.");
                             }

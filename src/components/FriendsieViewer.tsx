@@ -110,7 +110,6 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
 
         // Load Friendsie
         const loadFriendsie = async (id: string) => {
-            // Ensure `allFriendsies` is fetched and not null
             if (!allFriendsies) {
                 try {
                     const response = await fetch(
@@ -123,7 +122,6 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
                 }
             }
 
-            // Check if `allFriendsies` is still null or if the ID is invalid
             if (!allFriendsies || !allFriendsies[id]) {
                 console.error(`Friendsie with ID "${id}" not found.`);
                 return;
@@ -166,7 +164,6 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
             });
         };
 
-
         // Assign Face Texture
         const assignFaceTexture = (model: THREE.Object3D, faceUrl: string) => {
             textureLoader.load(
@@ -178,27 +175,33 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
                     model.traverse((child) => {
                         if ((child as THREE.Mesh).isMesh && child.name === "X") {
                             const mesh = child as THREE.Mesh;
-                            const originalMaterial = mesh.material as THREE.Material;
 
-                            const primaryMaterial = new THREE.MeshStandardMaterial({
-                                map: originalMaterial.map,
-                                normalMap: originalMaterial.normalMap,
-                                transparent: true,
-                            });
+                            // Ensure material is MeshStandardMaterial
+                            if (mesh.material instanceof THREE.MeshStandardMaterial) {
+                                const originalMaterial = mesh.material;
 
-                            const faceMaterial = new THREE.MeshStandardMaterial({
-                                map: faceTexture,
-                                transparent: true,
-                                depthTest: false,
-                                opacity: 1,
-                            });
+                                const primaryMaterial = new THREE.MeshStandardMaterial({
+                                    map: originalMaterial.map,
+                                    normalMap: originalMaterial.normalMap,
+                                    transparent: true,
+                                });
 
-                            mesh.geometry.clearGroups();
-                            mesh.geometry.addGroup(0, Infinity, 0); // Base material
-                            mesh.geometry.addGroup(0, Infinity, 1); // Face material
+                                const faceMaterial = new THREE.MeshStandardMaterial({
+                                    map: faceTexture,
+                                    transparent: true,
+                                    depthTest: false,
+                                    opacity: 1,
+                                });
 
-                            mesh.material = [primaryMaterial, faceMaterial];
-                            mesh.material.needsUpdate = true;
+                                mesh.geometry.clearGroups();
+                                mesh.geometry.addGroup(0, Infinity, 0); // Base material
+                                mesh.geometry.addGroup(0, Infinity, 1); // Face material
+
+                                mesh.material = [primaryMaterial, faceMaterial];
+                                mesh.material.needsUpdate = true;
+                            } else {
+                                console.warn("Material is not MeshStandardMaterial and cannot be processed.");
+                            }
                         }
                     });
                 },

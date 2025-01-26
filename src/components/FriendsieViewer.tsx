@@ -110,6 +110,7 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
 
         // Load Friendsie
         const loadFriendsie = async (id: string) => {
+            // Ensure `allFriendsies` is fetched and not null
             if (!allFriendsies) {
                 try {
                     const response = await fetch(
@@ -122,7 +123,8 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
                 }
             }
 
-            if (!allFriendsies[id]) {
+            // Check if `allFriendsies` is still null or if the ID is invalid
+            if (!allFriendsies || !allFriendsies[id]) {
                 console.error(`Friendsie with ID "${id}" not found.`);
                 return;
             }
@@ -163,6 +165,7 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
                 }
             });
         };
+
 
         // Assign Face Texture
         const assignFaceTexture = (model: THREE.Object3D, faceUrl: string) => {

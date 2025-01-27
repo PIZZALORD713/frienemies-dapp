@@ -8,8 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@moralisweb3/common-evm-utils": "^2.27.2",
     "@rainbow-me/rainbowkit": "^2.2.3",
     "@tanstack/react-query": "^5.55.3",
+    "moralis": "^2.27.2",
     "next": "^15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

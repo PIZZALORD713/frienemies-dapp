@@ -33,8 +33,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             address,
         });
 
-        const nfts = response.toJSON().result; // Extract the NFT result array
-        // Log the fetched NFTs for debugging console.log("Fetched NFTs:", nfts);
+        // Type response as a known Moralis type
+        const nfts = (response.toJSON() as { result: any[] }).result; // Type `result` explicitly
+
+        // Log the fetched NFTs for debugging
+        console.log("Fetched NFTs:", nfts);
 
         // Respond with the fetched data
         res.status(200).json({ result: nfts });

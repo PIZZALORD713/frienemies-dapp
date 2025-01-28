@@ -43,7 +43,12 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
             if (!rendererRef.current) {
                 rendererRef.current = new THREE.WebGLRenderer({ antialias: true });
                 rendererRef.current.setPixelRatio(window.devicePixelRatio);
-                rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+
+                // Set renderer size to the container dimensions
+                const width = mountRef.current?.clientWidth || window.innerWidth;
+                const height = mountRef.current?.clientHeight || window.innerHeight;
+
+                rendererRef.current.setSize(width, height);
                 rendererRef.current.setClearColor(0xffffff);
 
                 if (mountRef.current) {
@@ -52,12 +57,9 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
             }
 
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(
-                30,
-                window.innerWidth / window.innerHeight,
-                1,
-                500
-            );
+            const width = mountRef.current?.clientWidth || window.innerWidth;
+            const height = mountRef.current?.clientHeight || window.innerHeight;
+            const camera = new THREE.PerspectiveCamera(30, width / height, 1, 500);
             camera.position.set(0, 1, 10);
 
             controls = new OrbitControls(camera, rendererRef.current.domElement);
@@ -105,6 +107,18 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
 
             if (rendererRef.current) {
                 rendererRef.current.dispose();
+            }
+        };
+
+        // Resize Handler
+        const handleResize = () => {
+            const width = mountRef.current?.clientWidth || window.innerWidth;
+            const height = mountRef.current?.clientHeight || window.innerHeight;
+
+            if (cameraRef.current && rendererRef.current) {
+                cameraRef.current.aspect = width / height;
+                cameraRef.current.updateProjectionMatrix();
+                rendererRef.current.setSize(width, height);
             }
         };
 
@@ -238,7 +252,20 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
         };
     }, [friendsieId]);
 
-    return <div ref={mountRef} style={{ width: "100%", height: "100%" }} />;
+    return (
+        <div
+            ref={mountRef}
+            style={{
+                width: "100%",
+                maxWidth: "1200px",
+                height: "500px",
+                margin: "0 auto",
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                overflow: "hidden",
+            }}
+        />
+    );
 };
 
 export default FriendsieViewer;

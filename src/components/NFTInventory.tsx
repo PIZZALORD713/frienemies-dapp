@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
 
 interface NFT {
@@ -15,8 +15,9 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
     const [allNFTs, setAllNFTs] = useState<NFT[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
+    const carouselRef = useRef<HTMLDivElement>(null);
 
-    // Fetch all NFTs for the wallet
+    // Fetch NFTs for the wallet
     const fetchAllNFTs = async (walletAddress: string) => {
         if (!walletAddress) return;
 
@@ -27,8 +28,7 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
 
         try {
             do {
-                // Type the fetch response and JSON data explicitly
-                const response: Response = await fetch(
+                const response = await fetch(
                     `/api/fetchnfts?address=${walletAddress}${cursor ? `&cursor=${cursor}` : ""}`
                 );
 
@@ -44,10 +44,9 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
 
             setAllNFTs(accumulatedNFTs);
 
-            // Auto-select the first NFT if available
             if (accumulatedNFTs.length > 0) {
                 setSelectedNFT(accumulatedNFTs[0]);
-                onSelectNFT(accumulatedNFTs[0]); // Notify the parent component
+                onSelectNFT(accumulatedNFTs[0]);
             }
         } catch (error) {
             console.error("Error fetching NFTs:", error);
@@ -57,7 +56,7 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
         }
     };
 
-    // Automatically fetch NFTs when the wallet is connected or the address changes
+    // Fetch NFTs when wallet connects or address changes
     useEffect(() => {
         if (isConnected && address) {
             fetchAllNFTs(address);
@@ -70,62 +69,129 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
     // Handle NFT selection
     const handleSelectNFT = (nft: NFT) => {
         setSelectedNFT(nft);
-        onSelectNFT(nft); // Notify the parent component about the selected NFT
+        onSelectNFT(nft);
+        const selectedElement = document.getElementById(`nft-${nft.token_id}`);
+        selectedElement?.scrollIntoView({ behavior: "smooth", inline: "center" });
+    };
+
+    // Handle carousel scrolling
+    const scrollCarousel = (direction: "left" | "right") => {
+        if (carouselRef.current) {
+            const scrollAmount = direction === "left" ? -200 : 200;
+            carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        }
     };
 
     return (
-        <div>
+        <div className="inventory-container">
             <h1>Your NFT Inventory</h1>
             {loading && <p>Loading NFTs...</p>}
             {!loading && allNFTs.length > 0 && (
-                <>
-                    <div className="scroll-container">
-                        {allNFTs.map((nft, index) => (
+                <div className="carousel-container">
+                    <button className="arrow left" onClick={() => scrollCarousel("left")}>
+                        ←
+                    </button>
+                    <div className="carousel" ref={carouselRef}>
+                        {allNFTs.map((nft) => (
                             <button
-                                key={index}
-                                className={`scroll-item ${selectedNFT?.token_id === nft.token_id ? "selected" : ""}`}
+                                key={nft.token_id}
+                                id={`nft-${nft.token_id}`}
+                                className={`carousel-item ${selectedNFT?.token_id === nft.token_id ? "selected" : ""}`}
                                 onClick={() => handleSelectNFT(nft)}
                             >
                                 #{nft.token_id}
                             </button>
                         ))}
                     </div>
-                    <p>Selected NFT: #{selectedNFT?.token_id}</p>
-                </>
+                    <button className="arrow right" onClick={() => scrollCarousel("right")}>
+                        →
+                    </button>
+                </div>
             )}
             {allNFTs.length === 0 && !loading && <p>No NFTs found.</p>}
             <style jsx>{`
-        .scroll-container {
-          display: flex;
-          overflow-x: auto;
-          white-space: nowrap;
-          padding: 10px;
-          background-color: #f9f9f9;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
+                .inventory-container {
+                    width: 100%;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
 
-        .scroll-item {
-          display: inline-block;
-          margin-right: 10px;
-          padding: 10px 20px;
-          background-color: #007bff;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-        }
+                .carousel-container {
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    width: 100%;
+                    background: linear-gradient(to right, #007bff, #28a745, #6f42c1);
+                    border-radius: 8px;
+                    padding: 10px;
+                    overflow: hidden;
+                }
 
-        .scroll-item.selected {
-          background-color: #28a745;
-        }
+                .arrow {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(255, 255, 255, 0.8);
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 24px;
+                    cursor: pointer;
+                    z-index: 1;
+                }
 
-        .scroll-item:hover {
-          background-color: #0056b3;
-        }
-      `}</style>
+                .arrow.left {
+                    left: 5px;
+                }
+
+                .arrow.right {
+                    right: 5px;
+                }
+
+                .carousel {
+                    display: flex;
+                    overflow-x: auto;
+                    scroll-behavior: smooth;
+                    gap: 10px;
+                    width: calc(100% - 100px); /* Account for arrow buttons */
+                    padding: 5px 0;
+                }
+
+                .carousel-item {
+                    flex: 0 0 auto;
+                    background: #007bff;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                .carousel-item.selected {
+                    background: #28a745;
+                    font-weight: bold;
+                }
+
+                .carousel-item:hover {
+                    background: #0056b3;
+                }
+
+                .carousel::-webkit-scrollbar {
+                    height: 6px;
+                }
+
+                .carousel::-webkit-scrollbar-thumb {
+                    background: #ddd;
+                    border-radius: 5px;
+                }
+
+                .carousel::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+            `}</style>
         </div>
     );
 };

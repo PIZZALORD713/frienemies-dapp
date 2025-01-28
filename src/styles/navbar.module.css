@@ -6,7 +6,7 @@
 
 .navContent {
     display: flex; /* Ensure horizontal layout */
-    justify-content: flex-start; /* Align content to the left */
+    justify-content: space- between; /* Align content to ceneter */
     align-items: center; /* Center vertically */
     width: 100%; /* Ensure full width */
     gap: 2rem; /* Add spacing between logo and links */

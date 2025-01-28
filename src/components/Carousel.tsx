@@ -1,25 +1,21 @@
-﻿import React, { useState, useCallback } from "react";
+﻿import React, { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-// import "./Carousel.css"; // Assume you’ve moved the styles to a separate file for simplicity
 
 interface CarouselProps {
-    nftList: { token_id: string }[]; // List of NFTs (sorted by token_id)
-    onSelectNFT: (nft: { token_id: string }) => void; // Callback for selected NFT
-    selectedNFT: { token_id: string } | null; // Currently selected NFT
+    nftList: { token_id: string }[];
+    onSelectNFT: (nft: { token_id: string }) => void;
+    selectedNFT: { token_id: string } | null;
 }
 
 const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }) => {
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }); // Embla instance with looping enabled
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, containScroll: false });
 
-    // Scroll handlers
     const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
     const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
     return (
         <div className="carousel-container">
-            <button className="arrow-button left" onClick={scrollPrev}>
-                ◀
-            </button>
+            <button className="arrow-button left" onClick={scrollPrev}>◀</button>
             <div className="carousel" ref={emblaRef}>
                 <div className="carousel-track">
                     {nftList.map((nft) => (
@@ -33,16 +29,13 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
                     ))}
                 </div>
             </div>
-            <button className="arrow-button right" onClick={scrollNext}>
-                ▶
-            </button>
+            <button className="arrow-button right" onClick={scrollNext}>▶</button>
 
             <style jsx>{`
         .carousel-container {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 20px;
           position: relative;
           width: 100%;
           max-width: 1200px;
@@ -66,11 +59,13 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
         .carousel {
           overflow: hidden;
           flex: 1;
+          padding: 10px; /* Adds spacing to prevent overlap */
         }
 
         .carousel-track {
           display: flex;
-          gap: 10px;
+          gap: 15px; /* Ensure spacing between items */
+          padding: 10px 20px;
         }
 
         .carousel-item {
@@ -82,7 +77,7 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
           font-size: 14px;
           cursor: pointer;
           transition: transform 0.2s, background-color 0.2s;
-          min-width: 100px;
+          min-width: 80px;
           text-align: center;
         }
 

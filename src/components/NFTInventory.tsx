@@ -22,7 +22,6 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
         if (!walletAddress) return;
 
         setLoading(true);
-
         let cursor: string | null = null;
         let accumulatedNFTs: NFT[] = [];
 
@@ -42,6 +41,9 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
                 cursor = data.cursor || null;
             } while (cursor);
 
+            // **Sort NFTs by token_id in descending order**
+            accumulatedNFTs.sort((a, b) => Number(b.token_id) - Number(a.token_id));
+
             setAllNFTs(accumulatedNFTs);
 
             if (accumulatedNFTs.length > 0) {
@@ -55,6 +57,7 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
             setLoading(false);
         }
     };
+
 
     // Fetch NFTs when wallet connects or address changes
     useEffect(() => {

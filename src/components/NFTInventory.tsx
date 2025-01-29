@@ -91,7 +91,7 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
             <style jsx>{`
                 .inventory-container {
                     width: 100%;
-                    max-width: 1200px;
+                    max-width: 975px;
                     margin: 0 auto;
                     padding: 20px;
                 }

@@ -1,4 +1,6 @@
-﻿.container {
+﻿/* Home.module.css */
+
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6,6 +8,7 @@
     min-height: 100vh;
     padding: 0;
     margin: 0 auto;
+    width: 100%;
 }
 
 /* Main Section */
@@ -24,14 +27,16 @@
 @media (max-width: 768px) {
     .main {
         padding: 0 1rem;
+        text-align: center;
     }
 }
 
 /* Branding Title */
 .branding {
-    font-size: 2.5rem; /* Understated size */
+    font-size: 2rem; /* Adjusted for smaller screens */
     font-weight: 500;
     display: inline-block;
+    text-align: center;
 }
 
 .friendly {
@@ -67,7 +72,6 @@
     }
 }
 
-
 .nftSection {
     display: flex;
     flex-direction: column;
@@ -82,16 +86,26 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-    .nftSection h2 {
-        text-align: center; /* Center the heading if necessary */
-        margin-bottom: 20px;
+@media (max-width: 768px) {
+    .nftSection {
+        padding: 10px;
+        margin: 10px auto;
+        text-align: center;
     }
+}
+
+.nftSection h2 {
+    text-align: center; /* Center the heading if necessary */
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
 
 .heroPlace1 {
     width: 100%; /* Allow the section to take full width */
     display: block; /* Ensure it behaves as a block-level element */
+    max-width: 100%;
+    height: auto;
 }
-
 
 /* Footer */
 .footer {

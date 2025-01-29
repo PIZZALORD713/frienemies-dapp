@@ -1,0 +1,96 @@
+/* Wrapper to align arrows properly */
+.embla__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Main Carousel */
+.embla {
+    overflow: hidden;
+    width: 80%;
+    position: relative;
+}
+
+/* Container holding slides */
+.embla__container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    will-change: transform;
+}
+
+/* Individual slide */
+.embla__slide {
+    flex: 0 0 auto;
+    min-width: 15%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    text-align: center;
+}
+
+    .embla__slide.selected {
+        background-color: #28a745;
+        transform: scale(1.1);
+    }
+
+    .embla__slide:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+/* Arrows */
+.arrow__button {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 44px;
+    cursor: pointer;
+    color: #007bff;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* Left Arrow */
+.left {
+    left: 30px;
+}
+
+/* Right Arrow */
+.right {
+    right: 30px;
+}
+
+/* smaller screens */
+@media (max-width: 768px) {
+    .embla {
+        width: 35%;
+    }
+    .embla__slide {
+        min-width: 30%;
+    }
+    .left {
+        left: 240px;
+    }
+
+    .right {
+        right: 240px;
+    }
+
+    .arrow__button {
+        font-size: 50px;
+    }
+}

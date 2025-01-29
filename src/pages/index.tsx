@@ -21,11 +21,11 @@ const Home: NextPage = () => {
                 <link href="/favicon.ico" rel="icon" />
             </Head>
 
-            <Navbar />
+            
 
             <main className={styles.main}>
 
-                
+                <Navbar />
 
                 {/* NFT Inventory for navigation */}
                 <NFTInventory onSelectNFT={setSelectedNFT} />

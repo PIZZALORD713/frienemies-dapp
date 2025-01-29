@@ -4,7 +4,7 @@ import homeStyles from "../styles/Home.module.css"; // Home styles
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const Navbar: React.FC = () => {
-    const [small, setSmall] = useState(false);
+    const [small, setSmall] = useState(true); // Prevents large height on initial render
     const [menuOpen, setMenuOpen] = useState(false);
 
     // Handle navbar shrink on scroll
@@ -12,6 +12,8 @@ const Navbar: React.FC = () => {
         const handleScroll = () => {
             setSmall(window.scrollY > 50);
         };
+
+        setTimeout(() => setSmall(window.scrollY > 50), 50); // Ensures correct height after first render
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);

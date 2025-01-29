@@ -4,14 +4,7 @@
     min-height: 100vh;
 }
 
-.navContent {
-    display: flex; /* Ensure horizontal layout */
-    justify-content: space- between; /* Align content to ceneter */
-    align-items: center; /* Center vertically */
-    width: 100%; /* Ensure full width */
-    gap: 2rem; /* Add spacing between logo and links */
-}
-
+/* Navbar */
 .nav {
     display: flex;
     justify-content: space-between;
@@ -21,68 +14,116 @@
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100vw; /* Ensures full width */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    .navLinks
-
-{
-    display: flex; /* Ensure links are aligned horizontally */
-    list-style: none; /* Remove bullets */
-    margin: 0;
-    padding: 0;
-    gap: 1.5rem; /* Add spacing between links */
-    align-items: center; /* Vertically align the links */
+    transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
 
-.navLinks li {
-    display: inline; /* Make sure each list item is inline */
+/* Shrink navbar on scroll */
+.shrink {
+    height: 50px;
+    padding: 0.5rem 1.5rem;
 }
 
-.navLinks a {
-    text-decoration: none; /* Remove underline */
-    color: #555; /* Neutral link color */
-    font-size: 1rem;
-    transition: color 0.3s ease; /* Smooth hover effect */
+/* Center navbar content properly */
+.navContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px; /* Prevents excessive stretching */
+    margin: 0 auto; /* Centers content */
 }
 
-    .navLinks a:hover {
-        color: #000; /* Darker color on hover */
-    }
-
-}
-
-.navLinks button {
-    background: none;
-    border: none;
-    color: #555;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    padding: 0;
-    transition: color 0.3s ease;
-}
-
-    .navLinks button:hover {
-        color: #000;
-    }
-
+/* Logo / Branding */
 .branding {
     cursor: pointer;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    color: #222;
+    margin-left: 1rem; /* Adds space from left edge */
 }
 
-.navLinks button {
-    background: none;
-    border: none;
-    color: #555;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
+/* Navigation Links */
+.navLinks {
+    display: flex;
+    list-style: none;
+    margin: 0;
     padding: 0;
-    transition: color 0.3s ease;
+    gap: 1.5rem;
+    align-items: center;
 }
 
-    .navLinks button:hover {
-        color: #000;
+    /* Ensure navbar links align properly */
+    .navLinks li {
+        display: inline;
     }
+
+    .navLinks a, .navLinks button {
+        text-decoration: none;
+        color: #555;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .navLinks a:hover, .navLinks button:hover {
+            color: #000;
+        }
+
+/* Hamburger Menu for Mobile */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+    position: absolute;
+    right: 20px; /* Ensures it's aligned properly */
+}
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        transition: transform 0.3s ease-in-out;
+    }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+    .nav {
+        padding: 1rem;
+    }
+
+    .navContent {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Adjust navbar visibility and positioning */
+    .navLinks {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0; /* Fixes left-side visibility */
+        background: #f5f5f5;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+    }
+
+        .navLinks.active {
+            display: flex;
+        }
+
+    .hamburger {
+        display: flex;
+    }
+}

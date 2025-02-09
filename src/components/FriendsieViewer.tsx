@@ -23,7 +23,7 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
         if (!rendererRef.current) {
             rendererRef.current = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             rendererRef.current.setPixelRatio(window.devicePixelRatio);
-            rendererRef.current.outputEncoding = THREE.sRGBEncoding;
+            rendererRef.current.outputColorSpace = THREE.SRGBColorSpace;
             rendererRef.current.toneMapping = THREE.ACESFilmicToneMapping;
             rendererRef.current.toneMappingExposure = 0.5; // Adjust exposure
         }

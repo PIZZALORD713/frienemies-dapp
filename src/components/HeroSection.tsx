@@ -6,11 +6,15 @@ import Image from "next/image";
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+    className?: string; // ✅ Add className prop
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ className }) => {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="bg-gray-100 p-6 flex min-h-screen flex-col items-center justify-center">
+        <div className={`bg-gray-100 p-6 flex min-h-screen flex-col items-center justify-center ${className}`}>
             <motion.div
                 className="bg-white p-4 relative w-full max-w-2xl rounded-xl shadow-lg"
                 initial={{ rotateX: 10, scale: 0.95 }}

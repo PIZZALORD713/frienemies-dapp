@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { useFriendsieLoader } from "../hooks/useFriendsieLoader";
 
 interface FriendsieViewerProps {
@@ -22,6 +23,9 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
         if (!rendererRef.current) {
             rendererRef.current = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             rendererRef.current.setPixelRatio(window.devicePixelRatio);
+            rendererRef.current.outputEncoding = THREE.sRGBEncoding;
+            rendererRef.current.toneMapping = THREE.ACESFilmicToneMapping;
+            rendererRef.current.toneMappingExposure = 0.5; // Adjust exposure
         }
 
         // Initialize Scene & Camera
@@ -34,11 +38,37 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
         sceneRef.current = scene;
         cameraRef.current = camera;
 
-        // Lights
-        scene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 0.95));
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
-        directionalLight.position.set(-0.75, 2.5, 2.5);
-        scene.add(directionalLight);
+        // HDR Environment Lighting
+        new RGBELoader().setPath('/hdr/').load('studio.hdr', (texture) => {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.environment = texture;
+            scene.background = null; // Optional: use "texture" to Set background to HDR
+        });
+
+        // Directional Lights
+        const directionalLights = [
+            { x: 5, y: 5, z: 10 },
+            { x: -5, y: 5, z: 10 },
+            { x: 5, y: 5, z: -10 },
+            { x: -5, y: 5, z: -10 }
+        ];
+
+        directionalLights.forEach(({ x, y, z }) => {
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(x, y, z);
+            light.castShadow = false;
+            light.shadow.mapSize.width = 1024;
+            light.shadow.mapSize.height = 1024;
+            scene.add(light);
+
+            // Add Light Helper (Shows direction of the light)
+            //const lightHelper = new THREE.DirectionalLightHelper(light, 1);
+            //scene.add(lightHelper);
+        });
+
+        // Hemisphere Light for Ambient Lighting
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x666666, 1);
+        scene.add(hemiLight);
 
         // Initialize Controls
         const controls = new OrbitControls(camera, rendererRef.current.domElement);
@@ -104,7 +134,7 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
             ref={mountRef}
             style={{
                 width: "100%",
-                maxWidth: "1200px",
+                maxWidth: "900px",
                 height: "500px",
                 margin: "0 auto",
                 border: "1px solid #ccc",

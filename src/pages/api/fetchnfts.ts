@@ -37,8 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const nfts = (response.toJSON() as { result: any[] }).result; // Type `result` explicitly
 
         // Log the fetched NFTs for debugging
-        console.log("Fetched NFTs:", nfts);
-
+        // console.log("Fetched NFTs:", nfts);
+        console.log("Fetched NFTs Succesfully");
         // Respond with the fetched data
         res.status(200).json({ result: nfts });
     } catch (error) {

@@ -23,7 +23,7 @@ export const applyFaceTexture = (model: THREE.Object3D, faceUrl: string, texture
                         const faceMaterial = new THREE.MeshStandardMaterial({
                             map: faceTexture,
                             transparent: true,
-                            depthTest: false,
+                            depthTest: true,// needs to be false for transparency glass obj to show vibes
                             opacity: 1,
                         });
 

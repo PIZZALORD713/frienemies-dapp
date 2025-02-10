@@ -87,7 +87,13 @@ export const useFriendsieLoader = (
                 // 🧹 Clear previous model before loading a new one
                 clearScene();
 
-                const friendsie = allFriendsies[friendsieId];
+                if (!allFriendsies) {
+                    console.error("allFriendsies is null");
+                    return; // Prevent further execution if it's null
+                }
+
+                const friendsie = allFriendsies[friendsieId] ?? null; // Ensure safe access
+
                 const attributes = friendsie.attributes;
                 let faceTrait: string | null = null;
 

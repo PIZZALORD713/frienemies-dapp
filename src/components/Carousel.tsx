@@ -1,5 +1,6 @@
-﻿import React, { useCallback } from "react";
+﻿import React, { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import styles from "../styles/Carousel.module.css";
 
 interface CarouselProps {
@@ -9,18 +10,66 @@ interface CarouselProps {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }) => {
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+    const emblaRef = useRef<HTMLDivElement | null>(null);
+    const [emblaApi, setEmblaApi] = useState<any | null>(null);
 
-    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+    // ✅ Initialize Embla with Wheel Gesture Support
+    const [emblaNode, embla] = useEmblaCarousel(
+        { loop: true },
+        [
+            WheelGesturesPlugin({
+                forceWheelAxis: "x", // Forces vertical scrolling to be interpreted as horizontal
+                wheelDraggingClass: "is-dragging",
+            }),
+        ]
+    );
+
+    // ✅ Store API once it's available
+    useEffect(() => {
+        if (embla) {
+            setEmblaApi(embla);
+        }
+    }, [embla]);
+
+    const scrollPrev = useCallback(() => {
+        if (emblaApi) emblaApi.scrollPrev();
+    }, [emblaApi]);
+
+    const scrollNext = useCallback(() => {
+        if (emblaApi) emblaApi.scrollNext();
+    }, [emblaApi]);
+
+    // ✅ Handle Mouse Wheel Scroll (Ensuring Embla API is Ready)
+    useEffect(() => {
+        if (!emblaApi || !emblaRef.current) return;
+
+        const onWheel = (event: WheelEvent) => {
+            event.preventDefault(); // Prevent page scrolling
+            if (!emblaApi) return;
+
+            if (event.deltaY > 0) {
+                emblaApi.scrollNext();
+            } else {
+                emblaApi.scrollPrev();
+            }
+        };
+
+        emblaRef.current.addEventListener("wheel", onWheel, { passive: false });
+
+        return () => {
+            emblaRef.current?.removeEventListener("wheel", onWheel);
+        };
+    }, [emblaApi]);
 
     return (
-        <div className={styles.embla__wrapper}>
+        <div className={styles.embla__wrapper} ref={emblaRef}>
             {/* Left Arrow */}
-            <button className={styles.arrow__button + " " + styles.left} onClick={scrollPrev}>◀</button>
+            <button className={styles.arrow__button + " " + styles.left} onClick={scrollPrev}>
+                ◀
+            </button>
 
             {/* Carousel */}
-            <div className={styles.embla} ref={emblaRef}>
+            <div className={styles.embla} ref={emblaNode}>
                 <div className={styles.embla__container}>
                     {nftList.map((nft) => (
                         <button
@@ -35,7 +84,9 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
             </div>
 
             {/* Right Arrow */}
-            <button className={styles.arrow__button + " " + styles.right} onClick={scrollNext}>▶</button>
+            <button className={styles.arrow__button + " " + styles.right} onClick={scrollNext}>
+                ▶
+            </button>
         </div>
     );
 };

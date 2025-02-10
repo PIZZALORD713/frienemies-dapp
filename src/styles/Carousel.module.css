@@ -18,9 +18,13 @@
 .embla__container {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 10px; /* This creates spacing between slides */
     will-change: transform;
+    align-items: center;
+    padding-left: 10px; /* Prevents items from sticking */
+    padding-right: 10px; /* Ensures smooth looping */
 }
+
 
 /* Individual slide */
 .embla__slide {

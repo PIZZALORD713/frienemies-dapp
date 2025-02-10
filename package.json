@@ -12,6 +12,7 @@
     "@rainbow-me/rainbowkit": "^2.2.3",
     "@tanstack/react-query": "^5.55.3",
     "embla-carousel-react": "^8.5.2",
+    "embla-carousel-wheel-gestures": "^8.0.1",
     "framer-motion": "^12.0.6",
     "moralis": "^2.27.2",
     "next": "^15.1.4",

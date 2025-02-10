@@ -7,7 +7,7 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 
 interface HeroSectionProps {
-    className?: string; // ✅ Add className prop
+    className?: string; 
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ className }) => {

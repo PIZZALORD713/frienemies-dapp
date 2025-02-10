@@ -1,4 +1,4 @@
-/* Wrapper to align arrows properly */
+﻿/* Wrapper to align arrows properly */
 .embla__wrapper {
     position: relative;
     display: flex;
@@ -18,37 +18,57 @@
 .embla__container {
     display: flex;
     flex-direction: row;
-    gap: 10px; /* This creates spacing between slides */
+    gap: 10px; /* Space between slides */
     will-change: transform;
     align-items: center;
     padding-left: 10px; /* Prevents items from sticking */
     padding-right: 10px; /* Ensures smooth looping */
 }
 
-
 /* Individual slide */
 .embla__slide {
     flex: 0 0 auto;
     min-width: 15%;
-    background-color: #007bff;
+    background-color: #007bff; /* Default blue */
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
     font-size: 14px;
     cursor: pointer;
-    transition: transform 0.2s, background-color 0.2s;
     text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease !important;
 }
 
-    .embla__slide.selected {
-        background-color: #28a745;
-        transform: scale(1.1);
+    /* 🔹 Hover Effect (Whole Slide) */
+    .embla__slide:hover {
+        background-color: #28a745 !important; /* Green */
+        padding: 12px 17px !important; /* Instead of transform, increase padding */
+        box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.5); /* Optional glow effect */
     }
 
-    .embla__slide:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
+    /* 🔹 Selected Slide Effect (Make it Stand Out More) */
+    .embla__slide.selected {
+        background-color: #28a745 !important; /* Green */
+        padding: 14px 19px !important; /* Make selected slide slightly bigger */
+        box-shadow: 0px 0px 15px rgba(40, 167, 69, 0.7); /* Stronger glow effect */
+    }
+
+    /* 🔹 Ensure cloned slides behave exactly like real ones */
+    .embla__slide.is-clone {
+        pointer-events: all;
+        opacity: 1 !important;
+        visibility: visible !important;
+        position: absolute;
+    }
+
+    /* 🔹 Keep text scaling with slide */
+    .embla__slide > span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
     }
 
 /* Arrows */
@@ -78,14 +98,16 @@
     right: 30px;
 }
 
-/* smaller screens */
+/* Smaller Screens */
 @media (max-width: 768px) {
     .embla {
         width: 35%;
     }
+
     .embla__slide {
         min-width: 30%;
     }
+
     .left {
         left: 240px;
     }

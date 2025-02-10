@@ -14,6 +14,8 @@ export const useFriendsieLoader = (
     const dracoLoaderRef = useRef<DRACOLoader | null>(null);
     const textureLoaderRef = useRef(new THREE.TextureLoader());
 
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     useEffect(() => {
         if (!dracoLoaderRef.current) {
             const dracoLoader = new DRACOLoader();
@@ -29,7 +31,7 @@ export const useFriendsieLoader = (
 
         let allFriendsies: Record<string, any> | null = null;
 
-        // 🔹 Function to clear previous models from the scene
+        // 🧹 Clear previous models from the scene before loading a new one
         const clearScene = () => {
             if (!sceneRef.current) return;
 
@@ -54,6 +56,7 @@ export const useFriendsieLoader = (
             loadedModelsRef.current.length = 0;
         };
 
+        // 🔹 Debounced function to load a Friendsie model
         const loadFriendsie = async () => {
             if (!friendsieId) return;
 
@@ -74,42 +77,50 @@ export const useFriendsieLoader = (
                 return;
             }
 
-            // 🧹 Clear the scene before loading a new model
-            clearScene();
+            // 🛑 Cancel previous timeout if user scrolls fast
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
 
-            const friendsie = allFriendsies[friendsieId];
-            const attributes = friendsie.attributes;
-            let faceTrait: string | null = null;
+            // ⏳ Set a debounce timer before loading
+            debounceTimeoutRef.current = setTimeout(() => {
+                // 🧹 Clear previous model before loading a new one
+                clearScene();
 
-            attributes.forEach(({ trait_type, asset_url }: { trait_type: string; asset_url: string }) => {
-                if (trait_type === "face") {
-                    faceTrait = asset_url;
-                }
+                const friendsie = allFriendsies[friendsieId];
+                const attributes = friendsie.attributes;
+                let faceTrait: string | null = null;
 
-                if (asset_url && asset_url.endsWith(".glb")) {
-                    gltfLoaderRef.current?.load(
-                        asset_url,
-                        (gltf) => {
-                            const model = gltf.scene;
-                            model.scale.set(10, 10, 10);
-                            sceneRef.current?.add(model);
-                            loadedModelsRef.current.push(model);
+                attributes.forEach(({ trait_type, asset_url }: { trait_type: string; asset_url: string }) => {
+                    if (trait_type === "face") {
+                        faceTrait = asset_url;
+                    }
 
-                            if (trait_type === "head" && faceTrait) {
-                                applyFaceTexture(model, faceTrait, textureLoaderRef.current);
-                            }
+                    if (asset_url && asset_url.endsWith(".glb")) {
+                        gltfLoaderRef.current?.load(
+                            asset_url,
+                            (gltf) => {
+                                const model = gltf.scene;
+                                model.scale.set(10, 10, 10);
+                                sceneRef.current?.add(model);
+                                loadedModelsRef.current.push(model);
 
-                            if (gltf.animations && gltf.animations.length > 0) {
-                                const mixer = new THREE.AnimationMixer(model);
-                                gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
-                                mixersRef.current.push(mixer);
-                            }
-                        },
-                        undefined,
-                        (error) => console.error(`Error loading GLB asset: ${asset_url}`, error)
-                    );
-                }
-            });
+                                if (trait_type === "head" && faceTrait) {
+                                    applyFaceTexture(model, faceTrait, textureLoaderRef.current);
+                                }
+
+                                if (gltf.animations && gltf.animations.length > 0) {
+                                    const mixer = new THREE.AnimationMixer(model);
+                                    gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
+                                    mixersRef.current.push(mixer);
+                                }
+                            },
+                            undefined,
+                            (error) => console.error(`Error loading GLB asset: ${asset_url}`, error)
+                        );
+                    }
+                });
+            }, 300); // ⏳ Debounce delay (300ms)
         };
 
         loadFriendsie();

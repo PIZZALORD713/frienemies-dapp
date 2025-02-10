@@ -18,7 +18,7 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
         { loop: true },
         [
             WheelGesturesPlugin({
-                forceWheelAxis: "x", // Forces vertical scrolling to be interpreted as horizontal
+                forceWheelAxis: "x",
                 wheelDraggingClass: "is-dragging",
             }),
         ]
@@ -31,60 +31,70 @@ const Carousel: React.FC<CarouselProps> = ({ nftList, onSelectNFT, selectedNFT }
         }
     }, [embla]);
 
-    const scrollPrev = useCallback(() => {
-        if (emblaApi) emblaApi.scrollPrev();
-    }, [emblaApi]);
+    // ✅ Scroll & Select Slide on Click
+    const handleSlideClick = useCallback(
+        (index: number) => {
+            if (!emblaApi) return;
+            emblaApi.scrollTo(index); // Scroll to clicked slide
+            onSelectNFT(nftList[index]); // Update selected NFT
+        },
+        [emblaApi, nftList, onSelectNFT]
+    );
 
-    const scrollNext = useCallback(() => {
-        if (emblaApi) emblaApi.scrollNext();
-    }, [emblaApi]);
+    // ✅ Ensure selected NFT updates when carousel moves
+    const handleSelect = useCallback(() => {
+        if (!emblaApi) return;
+        const selectedIndex = emblaApi.selectedScrollSnap();
+        onSelectNFT(nftList[selectedIndex]);
+    }, [emblaApi, nftList, onSelectNFT]);
 
-    // ✅ Handle Mouse Wheel Scroll (Ensuring Embla API is Ready)
+    useEffect(() => {
+        if (!emblaApi) return;
+        emblaApi.on("select", handleSelect);
+        return () => emblaApi.off("select", handleSelect);
+    }, [emblaApi, handleSelect]);
+
+    // ✅ Handle Mouse Wheel Scroll
     useEffect(() => {
         if (!emblaApi || !emblaRef.current) return;
 
         const onWheel = (event: WheelEvent) => {
-            event.preventDefault(); // Prevent page scrolling
-            if (!emblaApi) return;
-
-            if (event.deltaY > 0) {
-                emblaApi.scrollNext();
-            } else {
-                emblaApi.scrollPrev();
-            }
+            event.preventDefault();
+            if (event.deltaY > 0) emblaApi.scrollNext();
+            else emblaApi.scrollPrev();
         };
 
         emblaRef.current.addEventListener("wheel", onWheel, { passive: false });
 
-        return () => {
-            emblaRef.current?.removeEventListener("wheel", onWheel);
-        };
+        return () => emblaRef.current?.removeEventListener("wheel", onWheel);
     }, [emblaApi]);
 
     return (
         <div className={styles.embla__wrapper} ref={emblaRef}>
             {/* Left Arrow */}
-            <button className={styles.arrow__button + " " + styles.left} onClick={scrollPrev}>
+            <button className={styles.arrow__button + " " + styles.left} onClick={() => emblaApi?.scrollPrev()}>
                 ◀
             </button>
 
             {/* Carousel */}
             <div className={styles.embla} ref={emblaNode}>
                 <div className={styles.embla__container}>
-                    {nftList.map((nft) => (
-                        <button
+                    {nftList.map((nft, index) => (
+                        <div
                             key={nft.token_id}
-                            className={`${styles.embla__slide} ${selectedNFT?.token_id === nft.token_id ? styles.selected : ""}`}
-                            onClick={() => onSelectNFT(nft)}
+                            className={`${styles.embla__slide} ${selectedNFT?.token_id === nft.token_id ? styles.selected : ""
+                                }`}
+                            data-index={index}
+                            onClick={() => handleSlideClick(index)} // ✅ Click event added
                         >
                             #{nft.token_id}
-                        </button>
+                        </div>
                     ))}
                 </div>
             </div>
 
             {/* Right Arrow */}
-            <button className={styles.arrow__button + " " + styles.right} onClick={scrollNext}>
+            <button className={styles.arrow__button + " " + styles.right} onClick={() => emblaApi?.scrollNext()}>
                 ▶
             </button>
         </div>

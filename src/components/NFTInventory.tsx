@@ -1,14 +1,15 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
-import Carousel from "./Carousel"; // Import the updated Carousel component
+import { ConnectButton } from "@rainbow-me/rainbowkit"; // Import the same Connect Button
+import Carousel from "./Carousel";
 
 interface NFT {
     token_id: string;
-    [key: string]: any; // Adjust based on your NFT data structure
+    [key: string]: any;
 }
 
 interface NFTInventoryProps {
-    onSelectNFT: (nft: NFT) => void; // Callback to pass the selected NFT to the viewer
+    onSelectNFT: (nft: NFT) => void;
 }
 
 const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
@@ -16,6 +17,12 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
     const [allNFTs, setAllNFTs] = useState<NFT[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
+
+    // Default NFTs when none are found
+    const defaultNFTs: NFT[] = [
+        { token_id: "7499" }, { token_id: "8448" }, { token_id: "6602" }, { token_id: "6149" }
+        
+    ];
 
     // Fetch NFTs for the wallet
     const fetchAllNFTs = async (walletAddress: string) => {
@@ -41,7 +48,7 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
                 cursor = data.cursor || null;
             } while (cursor);
 
-            // **Sort NFTs by token_id in descending order**
+            // Sort NFTs by token_id in descending order
             accumulatedNFTs.sort((a, b) => Number(b.token_id) - Number(a.token_id));
 
             setAllNFTs(accumulatedNFTs);
@@ -49,15 +56,21 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
             if (accumulatedNFTs.length > 0) {
                 setSelectedNFT(accumulatedNFTs[0]);
                 onSelectNFT(accumulatedNFTs[0]);
+            } else {
+                // No NFTs found, show defaults
+                setAllNFTs(defaultNFTs);
+                setSelectedNFT(defaultNFTs[0]);
+                onSelectNFT(defaultNFTs[0]);
             }
         } catch (error) {
             console.error("Error fetching NFTs:", error);
-            setAllNFTs([]);
+            setAllNFTs(defaultNFTs);
+            setSelectedNFT(defaultNFTs[0]);
+            onSelectNFT(defaultNFTs[0]);
         } finally {
             setLoading(false);
         }
     };
-
 
     // Fetch NFTs when wallet connects or address changes
     useEffect(() => {
@@ -78,21 +91,36 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
     return (
         <div className="inventory-container">
             <h1>Your NFT Inventory</h1>
-            {loading && <p>Loading NFTs...</p>}
-            {!loading && allNFTs.length > 0 && (
+
+            {/* If not connected, show the connect button */}
+            {!isConnected && (
+                <div className="connect-container">
+                    <p>Please connect your wallet to view your NFTs.</p>
+                    <ConnectButton chainStatus="none" showBalance={false} /> {/* Same as Navbar */}
+                </div>
+            )}
+
+            {/* If connected and loading */}
+            {isConnected && loading && <p>Loading NFTs...</p>}
+
+            {/* If connected and NFTs exist */}
+            {isConnected && !loading && allNFTs.length > 0 && (
                 <Carousel
                     nftList={allNFTs}
                     onSelectNFT={handleSelectNFT}
                     selectedNFT={selectedNFT}
                 />
             )}
-            {allNFTs.length === 0 && !loading && <p>No NFTs found.</p>}
 
             <style jsx>{`
                 .inventory-container {
                     width: 100%;
                     max-width: 975px;
                     margin: 0 auto;
+                    padding: 20px;
+                }
+                .connect-container {
+                    text-align: center;
                     padding: 20px;
                 }
             `}</style>

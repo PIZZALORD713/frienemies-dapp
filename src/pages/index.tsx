@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import NFTInventory from "../components/NFTInventory"; // Import the NFTInventory component
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import HeroSection from "../components/HeroSection";
 
 
 // Lazy load FriendsieViewer (disable SSR to avoid hydration issues)
@@ -33,8 +32,6 @@ const Home: NextPage = () => {
             <Navbar />
 
             <main className={styles.main}>
-                {/* Hero Section */}
-                <HeroSection className={styles.story} />
                 {/* NFT Inventory for navigation */}
                 <NFTInventory onSelectNFT={setSelectedNFT} />
 

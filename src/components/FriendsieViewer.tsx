@@ -134,7 +134,7 @@ const FriendsieViewer: React.FC<FriendsieViewerProps> = ({ friendsieId }) => {
             ref={mountRef}
             style={{
                 width: "100%",
-                maxWidth: "900px",
+                maxWidth: "600px",
                 height: "500px",
                 margin: "0 auto",
                 border: "1px solid #ccc",

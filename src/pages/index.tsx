@@ -19,7 +19,7 @@ const Home: NextPage = () => {
             <Head>
                 <title>fRiENEMiES</title>
                 <meta
-                    content="some friends are even better as enemies"
+                    content="some friends are even better enemies"
                     name="description"
                 />
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

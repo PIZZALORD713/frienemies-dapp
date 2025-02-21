@@ -90,13 +90,13 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
 
     return (
         <div className="inventory-container">
-            <h1>Your NFT Inventory</h1>
+            <h1>fRiEN Viewer</h1>
 
             {/* If not connected, show the connect button */}
             {!isConnected && (
                 <div className="connect-container">
-                    <p>Please connect your wallet to view your NFTs.</p>
-                    <ConnectButton chainStatus="none" showBalance={false} /> {/* Same as Navbar */}
+                    <p>Please connect your wallet to view your NFTs. <ConnectButton chainStatus="none" showBalance={false} /> </p>
+                    
                 </div>
             )}
 
@@ -115,7 +115,6 @@ const NFTInventory: React.FC<NFTInventoryProps> = ({ onSelectNFT }) => {
             <style jsx>{`
                 .inventory-container {
                     width: 100%;
-                    max-width: 975px;
                     margin: 0 auto;
                     padding: 20px;
                 }
